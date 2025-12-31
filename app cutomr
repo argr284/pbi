@@ -1,0 +1,39 @@
+Applications_Custom :=
+VAR SelectedPeriod =
+    SELECTEDVALUE ( 'PeriodSelector'[PeriodType] )
+
+VAR MaxDateInData =
+    CALCULATE (
+        MAX ( 'DateTable'[Date] ),
+        ALL ( 'DateTable' )
+    )
+
+RETURN
+SWITCH (
+    TRUE (),
+
+    /* YTD */
+    SelectedPeriod = "YTD",
+        CALCULATE (
+            [Applications],
+            DATESYTD ( 'DateTable'[Date] )
+        ),
+
+    /* Current Month */
+    SelectedPeriod = "Current Month",
+        CALCULATE (
+            [Applications],
+            YEAR ( 'DateTable'[Date] ) = YEAR ( MaxDateInData ),
+            MONTH ( 'DateTable'[Date] ) = MONTH ( MaxDateInData )
+        ),
+
+    /* Previous Month */
+    SelectedPeriod = "Previous Month",
+        CALCULATE (
+            [Applications],
+            DATEADD ( 'DateTable'[Date], -1, MONTH )
+        ),
+
+    /* Default */
+    [Applications]
+)
