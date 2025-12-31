@@ -1,0 +1,35 @@
+Applications_Dynamic :=
+VAR SelectedPeriod =
+    SELECTEDVALUE ( 'PeriodSelector'[PeriodType] )
+
+VAR MaxDateInData =
+    MAX ( 'DateTable'[Date] )
+
+RETURN
+SWITCH (
+    TRUE (),
+
+    SelectedPeriod = "YTD",
+        CALCULATE (
+            [Applications],
+            DATESYTD ( 'DateTable'[Date] )
+        ),
+
+    SelectedPeriod = "Current Month",
+        CALCULATE (
+            [Applications],
+            YEAR ( 'DateTable'[Date] ) = YEAR ( MaxDateInData ),
+            MONTH ( 'DateTable'[Date] ) = MONTH ( MaxDateInData )
+        ),
+
+    SelectedPeriod = "Previous Month",
+        CALCULATE (
+            [Applications],
+            DATEADD ( 'DateTable'[Date], -1, MONTH )
+        ),
+
+    SelectedPeriod = "Custom Range",
+        [Applications],   -- Date slicer control karega
+
+    [Applications]
+)
