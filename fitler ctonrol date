@@ -1,0 +1,33 @@
+Date_Filter_Flag :=
+VAR Parm =
+    SELECTEDVALUE ( 'PeriodParm'[Period] )
+
+VAR AxisDate =
+    MAX ( 'DateTable'[Date] )
+
+VAR MaxDate =
+    CALCULATE (
+        MAX ( 'DateTable'[Date] ),
+        ALL ( 'DateTable' )
+    )
+
+VAR StartOfYear =
+    DATE ( YEAR ( MaxDate ), 1, 1 )
+
+VAR StartOfMonth =
+    DATE ( YEAR ( MaxDate ), MONTH ( MaxDate ), 1 )
+
+RETURN
+SWITCH (
+    TRUE (),
+
+    Parm = "YTD"
+        && AxisDate >= StartOfYear
+        && AxisDate <= MaxDate, 1,
+
+    Parm = "MTD"
+        && AxisDate >= StartOfMonth
+        && AxisDate <= MaxDate, 1,
+
+    0
+)
