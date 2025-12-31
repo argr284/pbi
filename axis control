@@ -1,0 +1,23 @@
+Show_Date_Flag :=
+VAR SelectedPeriod = SELECTEDVALUE ( 'PeriodSelector'[PeriodType] )
+VAR MaxDate = MAX ( 'DateTable'[Date] )
+RETURN
+SWITCH (
+    TRUE (),
+
+    SelectedPeriod = "YTD"
+        && 'DateTable'[Date] <= MaxDate
+        && YEAR ( 'DateTable'[Date] ) = YEAR ( MaxDate ), 1,
+
+    SelectedPeriod = "Current Month"
+        && YEAR ( 'DateTable'[Date] ) = YEAR ( MaxDate )
+        && MONTH ( 'DateTable'[Date] ) = MONTH ( MaxDate ), 1,
+
+    SelectedPeriod = "Previous Month"
+        && 'DateTable'[Date] >= EOMONTH ( MaxDate, -2 ) + 1
+        && 'DateTable'[Date] <= EOMONTH ( MaxDate, -1 ), 1,
+
+    SelectedPeriod = "Custom Range", 1,
+
+    0
+)
